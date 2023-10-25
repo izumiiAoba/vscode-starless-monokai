@@ -1,0 +1,36 @@
+// https://go.microsoft.com/fwlink/?LinkId=733558
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "compile",
+			"type": "npm",
+			"script": "compile:watch",
+			"problemMatcher": "$tsc-watch",
+			"isBackground": true,
+			"presentation": {
+				"reveal": "never"
+			},
+		},
+		{
+			"label": "generate",
+			"type": "npm",
+			"script": "generate:watch",
+			// TODO: The task 'generate' cannot be tracked. Make sure to have a problem matcher defined.
+			// "problemMatcher": [],
+			"isBackground": true,
+			"presentation": {
+				"reveal": "never"
+			},
+		},
+		{
+			"label": "prelaunch",
+			"problemMatcher": [],
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"compile",
+				"generate"
+			],
+		}
+	]
+}

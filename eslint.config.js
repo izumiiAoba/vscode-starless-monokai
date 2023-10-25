@@ -1,10 +1,13 @@
-import eslint from '@antfu/eslint-config';
+import eslint, { ignores } from '@antfu/eslint-config';
 
 export default eslint(
     {
         stylistic: {
             indent: 4,
         },
+        ignores: [
+            './dist-*',
+        ],
     },
     {
         rules: {
@@ -18,14 +21,8 @@ export default eslint(
             'style/member-delimiter-style': [
                 'error',
                 {
-                    multiline: {
-                        delimiter: 'semi',
-                        requireLast: true,
-                    },
-                    singleline: {
-                        delimiter: 'semi',
-                        requireLast: false,
-                    },
+                    multiline: { delimiter: 'semi', requireLast: true },
+                    singleline: { delimiter: 'semi', requireLast: false },
                     multilineDetection: 'brackets',
                 },
             ],
