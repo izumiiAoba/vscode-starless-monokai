@@ -6,8 +6,8 @@
 			"label": "compile",
 			"type": "npm",
 			"script": "compile:watch",
-			"problemMatcher": "$tsc-watch",
 			"isBackground": true,
+			"problemMatcher": "$tsc-watch",
 			"presentation": {
 				"reveal": "never"
 			},
@@ -16,9 +16,24 @@
 			"label": "generate",
 			"type": "npm",
 			"script": "generate:watch",
-			// TODO: The task 'generate' cannot be tracked. Make sure to have a problem matcher defined.
-			// "problemMatcher": [],
 			"isBackground": true,
+			// code.visualstudio.com/docs/editor/tasks#_defining-a-problem-matcher
+			"problemMatcher": {
+				"owner": "nodemon",
+				"fileLocation": "relative",
+				"pattern": {
+					"regexp": "^\\[nodemon\\] app crashed - waiting for file changes before starting(\\.)(\\.)(\\.)$",
+					"file": 1,
+					"location": 2,
+					"severity": 3,
+				},
+				// code.visualstudio.com/docs/editor/tasks#_background-watching-tasks
+				"background": {
+					"activeOnStart": true,
+					"beginsPattern": "^\\[nodemon\\] files triggering change check: (.+)$",
+					"endsPattern": "^\\[nodemon\\] clean exit - waiting for changes before restart$"
+				}
+			},
 			"presentation": {
 				"reveal": "never"
 			},
