@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { v1 } from './config.js';
+import { v } from './config.js';
 
 // eslint-disable-next-line no-console
-console.log('node env: ', process.env.NODE_ENV, v1);
+console.log('node env: ', process.env.NODE_ENV, v);

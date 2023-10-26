@@ -8,9 +8,9 @@
         "build": "npm run clean && npm run compile && npm run generate",
         "compile": "tsc",
         "compile:watch": "tsc --watch",
-        "generate": "node ./dist-script/index.js",
-        "generate:watch": "nodemon ./dist-script/index.js",
-        "clean": "rm -rf ./dist-*",
+        "generate": "node ./dist/script/index.js",
+        "generate:watch": "nodemon ./dist/script/index.js",
+        "clean": "rm -rf ./dist",
         "lint": "eslint src --ext ts"
     },
     "devDependencies": {

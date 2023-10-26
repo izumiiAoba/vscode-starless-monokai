@@ -9,7 +9,7 @@
         "moduleResolution": "NodeNext",
         "module": "NodeNext",
         "target": "es2022",
-        "outDir": "dist-script",
+        "outDir": "dist/script",
         // running
         "lib": [
             "es2022"

@@ -7,7 +7,7 @@
             "type": "extensionHost",
             "request": "launch",
             "args": [
-                "--extensionDevelopmentPath=${workspaceFolder}"
+                "--extensionDevelopmentPath=${workspaceFolder}/dist/extension"
             ],
             "preLaunchTask": "prelaunch"
         }

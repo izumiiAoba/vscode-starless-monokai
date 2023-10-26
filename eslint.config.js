@@ -6,7 +6,7 @@ export default eslint(
             indent: 4,
         },
         ignores: [
-            './dist-*',
+            './dist',
         ],
     },
     {
