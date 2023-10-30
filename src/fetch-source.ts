@@ -2,7 +2,7 @@ import { REPO_RAW_URL, SourceExtension } from './constants/index.ts';
 
 const fetchChangeLog = async () => {
     const response = await fetch(
-        `https//${REPO_RAW_URL}/${SourceExtension.REPO_AUTHOR}/${SourceExtension.REPO_NAME}/${SourceExtension.CHANGELOG_URL}`,
+        `https://${REPO_RAW_URL}/${SourceExtension.REPO_AUTHOR}/${SourceExtension.REPO_NAME}/${SourceExtension.CHANGELOG_URL}`,
     );
 
     // DEBUG:
