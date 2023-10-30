@@ -6,10 +6,11 @@
         "noFallthroughCasesInSwitch": true,
         "noUnusedParameters": true,
         // transpiling
-        "moduleResolution": "NodeNext",
-        "module": "NodeNext",
+        "module": "Node16",
+        "moduleResolution": "Node16",
         "target": "es2022",
-        "outDir": "dist/script",
+        "noEmit": true,
+        "allowImportingTsExtensions": true,
         // running
         "lib": [
             "es2022"

@@ -1,5 +1,8 @@
-import process from 'node:process';
-import { v } from './config.js';
+import { fetchSourceExtension } from './fetch-source.ts';
 
-// eslint-disable-next-line no-console
-console.log('node env: ', process.env.NODE_ENV, v);
+(async () => {
+    try {
+        fetchSourceExtension();
+    }
+    catch {}
+})();

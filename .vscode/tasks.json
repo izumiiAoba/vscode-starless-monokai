@@ -1,13 +1,33 @@
-// https://go.microsoft.com/fwlink/?LinkId=733558
+/**
+ * tasks.json: https://go.microsoft.com/fwlink/?LinkId=733558
+ * problemMatcher: code.visualstudio.com/docs/editor/tasks#_defining-a-problem-matcher
+ * backgroundTask: code.visualstudio.com/docs/editor/tasks#_background-watching-tasks
+ */
 {
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "compile",
+			"label": "build",
 			"type": "npm",
-			"script": "compile:watch",
+			"script": "build:watch",
 			"isBackground": true,
-			"problemMatcher": "$tsc-watch",
+			"problemMatcher": {
+				"owner": "rspack",
+				"pattern": {
+					"regexp": "^(\\w+) in (.+):(\\d+):(\\d+)$",
+					"severity": 1,
+					"file": 2,
+					"line": 3,
+					"column": 4
+				},
+				// Rspack config stat in verbose
+				"background": {
+					"beginsPattern": "^PublicPath: \\w+$",
+					// output by ForkTsCheckerWebpackPlugin
+					// due to TsChecker in Rspack dev mode won't block bundle proccess. and usually start after bundling
+					"endsPattern": "No errors found\\.|Found \\d+ error in \\w+ ms\\."
+				}
+			},
 			"presentation": {
 				"reveal": "never"
 			},
@@ -17,7 +37,6 @@
 			"type": "npm",
 			"script": "generate:watch",
 			"isBackground": true,
-			// code.visualstudio.com/docs/editor/tasks#_defining-a-problem-matcher
 			"problemMatcher": {
 				"owner": "nodemon",
 				"fileLocation": "relative",
@@ -27,7 +46,6 @@
 					"location": 2,
 					"severity": 3,
 				},
-				// code.visualstudio.com/docs/editor/tasks#_background-watching-tasks
 				"background": {
 					"activeOnStart": true,
 					"beginsPattern": "^\\[nodemon\\] files triggering change check: (.+)$",
@@ -43,7 +61,7 @@
 			"problemMatcher": [],
 			"dependsOrder": "sequence",
 			"dependsOn": [
-				"compile",
+				"build",
 				"generate"
 			],
 		}

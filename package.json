@@ -5,23 +5,26 @@
     "type": "module",
     "license": "MIT",
     "scripts": {
-        "build": "npm run clean && npm run compile && npm run generate",
-        "compile": "tsc",
-        "compile:watch": "tsc --watch",
-        "generate": "node ./dist/script/index.js",
-        "generate:watch": "nodemon ./dist/script/index.js",
-        "clean": "rm -rf ./dist",
-        "lint": "eslint src --ext ts"
+        "dev": "rm -rf ./dist/script && npm run build:dev && npm run generate",
+        "build:dev": "rspack build --mode=development",
+        "build:watch": "npm run build:dev -- --watch",
+        "build:prod": "rspack build --mode=production",
+        "generate": "node ./dist/script/main.js",
+        "generate:watch": "nodemon ./dist/script/main.js",
+        "lint": "eslint src --ext ts",
+        "lint:type": "tsc"
     },
     "devDependencies": {
         "@antfu/eslint-config": "^1.0.0-beta.28",
+        "@rspack/cli": "^0.3.8",
         "@types/node": "^20.8.7",
         "@types/vscode": "^1.78",
         "eslint": "^8.52.0",
+        "fork-ts-checker-webpack-plugin": "^9.0.2",
         "nodemon": "^3.0.1",
         "typescript": "^5.2.2"
     },
     "engines": {
-        "node": ">18.0.0"
+        "node": ">20.0.0"
     }
 }

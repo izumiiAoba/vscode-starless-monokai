@@ -1,4 +1,4 @@
-import eslint, { ignores } from '@antfu/eslint-config';
+import eslint from '@antfu/eslint-config';
 
 export default eslint(
     {
@@ -12,6 +12,7 @@ export default eslint(
     {
         rules: {
             'style/semi': ['error', 'always'],
+            'antfu/top-level-function': 'off',
         },
     },
     {
