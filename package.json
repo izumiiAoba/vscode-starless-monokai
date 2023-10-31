@@ -4,8 +4,12 @@
     "private": true,
     "type": "module",
     "license": "MIT",
+    "bin": {
+        "build": "./scripts/bin/build.js"
+    },
     "scripts": {
         "dev": "rm -rf ./dist/script && npm run build:dev && npm run generate",
+        "test-build": "node ./scripts/bin/build.js",
         "build:dev": "rspack build --mode=development",
         "build:watch": "npm run build:dev -- --watch",
         "build:prod": "rspack build --mode=production",
