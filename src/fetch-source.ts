@@ -6,9 +6,11 @@ const fetchChangeLog = async () => {
         `https://${REPO_RAW_URL}/${SourceExtension.REPO_AUTHOR}/${SourceExtension.REPO_NAME}/${SourceExtension.CHANGELOG_URL}`,
     );
 
+    const changelog = await response.text();
+
     // DEBUG:
     // eslint-disable-next-line no-console
-    console.log(response);
+    console.log(changelog);
 };
 
 // TODO:
