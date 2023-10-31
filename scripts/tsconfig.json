@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        // strictness
+        "strict": true,
+        // transpiling
+        "module": "Node16",
+        "moduleResolution": "Node16",
+        "target": "es2022",
+        "outDir": "./bin",
+        // running
+        "lib": [
+            "es2022"
+        ],
+    },
+    "include": [
+        "./**/*"
+    ]
+}

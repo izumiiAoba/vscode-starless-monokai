@@ -9,7 +9,7 @@
     },
     "scripts": {
         "dev": "rm -rf ./dist/script && npm run build:dev && npm run generate",
-        "test-build": "node ./scripts/bin/build.js",
+        "compile:build-scripts": "tsc -p ./scripts/tsconfig.json",
         "build:dev": "rspack build --mode=development",
         "build:watch": "npm run build:dev -- --watch",
         "build:prod": "rspack build --mode=production",
@@ -20,12 +20,12 @@
     },
     "devDependencies": {
         "@antfu/eslint-config": "^1.0.0-beta.28",
-        "@rspack/cli": "^0.3.8",
         "@types/node": "^20.8.7",
         "@types/vscode": "^1.78",
         "eslint": "^8.52.0",
         "fork-ts-checker-webpack-plugin": "^9.0.2",
         "nodemon": "^3.0.1",
+        "ts-morph": "^20.0.0",
         "typescript": "^5.2.2"
     },
     "engines": {

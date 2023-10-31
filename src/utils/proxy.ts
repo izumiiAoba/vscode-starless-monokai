@@ -1,5 +1,5 @@
 import { ProxyAgent, setGlobalDispatcher } from 'undici';
 
-export const setFetchProxy = (): void => {
-    setGlobalDispatcher(new ProxyAgent('http://127.0.0.1:7890'));
+export const setFetchProxy = (option: ConstructorParameters<typeof ProxyAgent>[0]): void => {
+    setGlobalDispatcher(new ProxyAgent(option));
 };
