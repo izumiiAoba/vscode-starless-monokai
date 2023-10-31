@@ -1,7 +1,7 @@
-import { ProxyAgent, setGlobalDispatcher } from 'undici';
 import { fetchSourceExtension } from './fetch-source.ts';
+import { setFetchProxy } from './utils/proxy.ts';
 
-setGlobalDispatcher(new ProxyAgent('http://127.0.0.1:7890'));
+setFetchProxy();
 
 (async () => {
     try {
