@@ -17,6 +17,7 @@ import chalk from 'chalk';
             outDir: path.resolve(rootPath, './dist/script'),
 
             // DEBUG: copy config from root's tsconfig.json
+            // TODO: maybe no need this option
             module: ModuleKind.Node16,
             moduleResolution: ModuleResolutionKind.Node16,
             target: ScriptTarget.ES2022,
