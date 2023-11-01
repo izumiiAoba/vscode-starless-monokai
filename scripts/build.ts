@@ -38,6 +38,7 @@ import chalk from 'chalk';
     project
         .getSourceFiles()
         .forEach((sourceFile) => {
+            // import
             const importDeclarations = sourceFile.getImportDeclarations();
             importDeclarations.forEach((declaration) => {
                 const importPathLiteral = declaration.getModuleSpecifier();
@@ -49,6 +50,23 @@ import chalk from 'chalk';
 
                 const convertedPath = `${matchResult[1]}.js`;
                 importPathLiteral.setLiteralValue(convertedPath);
+            });
+
+            // export
+            const exportDeclarations = sourceFile.getExportDeclarations();
+            exportDeclarations.forEach((declaration) => {
+                const exportPathLiteral = declaration.getModuleSpecifier();
+                if (!exportPathLiteral)
+                    return;
+
+                const exportPath = exportPathLiteral.getLiteralValue();
+
+                const matchResult = exportPath.match(/^((\.|\.\.)\/.+)\.ts$/);
+                if (!matchResult)
+                    return;
+
+                const convertedPath = `${matchResult[1]}.js`;
+                exportPathLiteral.setLiteralValue(convertedPath);
             });
         });
 
