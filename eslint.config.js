@@ -7,6 +7,7 @@ export default eslint(
         },
         ignores: [
             './dist',
+            '**/bin/**/*.js',
         ],
     },
     {

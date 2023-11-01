@@ -1,2 +1,36 @@
-console.log('abc');
-export {};
+import path from 'node:path';
+import url from 'node:url';
+import { Project, ScriptTarget } from 'ts-morph';
+// DEBUG:
+console.log('🌟', 'Start Build');
+// project root
+const rootPath = url.fileURLToPath(new URL('../../', import.meta.url));
+// initial project with config
+const project = new Project({
+    compilerOptions: {
+        tsConfigFilePath: path.resolve(rootPath, './tsconfig.json'),
+        target: ScriptTarget.ES2022,
+    },
+});
+// FIXME: why i need add manually, Project doesn't resolve and add source files in construction
+project.addSourceFilesAtPaths(path.resolve(rootPath, './src/**/*'));
+// manipulate import's module file extension
+project
+    .getSourceFiles()
+    .forEach((sourceFile) => {
+    const importDeclarations = sourceFile.getImportDeclarations();
+    importDeclarations.forEach((declaration) => {
+        const importPathLiteral = declaration.getModuleSpecifier();
+        const importPath = importPathLiteral.getLiteralValue();
+        const matchResult = importPath.match(/^((\.|\.\.)\/.+)\.ts$/);
+        if (!matchResult)
+            return;
+        const convertedPath = `${matchResult[1]}.js`;
+        importPathLiteral.setLiteralValue(convertedPath);
+        // DEBUG:
+        console.log(importPathLiteral.getLiteralValue());
+    });
+});
+project
+    .emit()
+    .then(result => result.getDiagnostics());
