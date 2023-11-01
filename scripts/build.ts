@@ -11,6 +11,7 @@ const rootPath = url.fileURLToPath(new URL('../../', import.meta.url));
 // initial project with config
 const project = new Project({
     compilerOptions: {
+        // TODO: maybe not load config successfully
         tsConfigFilePath: path.resolve(rootPath, './tsconfig.json'),
         target: ScriptTarget.ES2022,
         outDir: path.resolve(rootPath, './dist/script'),
@@ -19,6 +20,9 @@ const project = new Project({
 
 // FIXME: why i need add manually, Project doesn't resolve and add source files in construction
 project.addSourceFilesAtPaths(path.resolve(rootPath, './src/**/*'));
+
+const diagnostics = project.getPreEmitDiagnostics();
+console.log(project.formatDiagnosticsWithColorAndContext(diagnostics));
 
 // manipulate import's module file extension
 project

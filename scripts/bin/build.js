@@ -15,6 +15,8 @@ const project = new Project({
 });
 // FIXME: why i need add manually, Project doesn't resolve and add source files in construction
 project.addSourceFilesAtPaths(path.resolve(rootPath, './src/**/*'));
+const diagnostics = project.getPreEmitDiagnostics();
+console.log(project.formatDiagnosticsWithColorAndContext(diagnostics));
 // manipulate import's module file extension
 project
     .getSourceFiles()
