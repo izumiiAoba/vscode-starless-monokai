@@ -12,8 +12,8 @@
         "compile:build-scripts": "tsc -p ./scripts/tsconfig.json",
         "build": "node ./scripts/bin/build.js",
         "build:watch": "nodemon ./scripts/bin/build.js",
-        "generate": "node ./dist/script/main.js",
-        "generate:watch": "nodemon ./dist/script/main.js",
+        "generate": "node ./dist/script/index.js",
+        "generate:watch": "nodemon ./dist/script/index.js",
         "lint": "eslint src --ext ts",
         "lint:type": "tsc"
     },

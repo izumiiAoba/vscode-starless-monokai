@@ -13,6 +13,7 @@ const project = new Project({
     compilerOptions: {
         tsConfigFilePath: path.resolve(rootPath, './tsconfig.json'),
         target: ScriptTarget.ES2022,
+        outDir: path.resolve(rootPath, './dist/script'),
     },
 });
 
@@ -37,6 +38,7 @@ project
         });
     });
 
+// emit js files
 project
     .emit()
     .then(result => result.getDiagnostics());

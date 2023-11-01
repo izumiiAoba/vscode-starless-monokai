@@ -1,8 +1,8 @@
 import path from 'node:path';
 import url from 'node:url';
 import { Project, ScriptTarget } from 'ts-morph';
-// DEBUG:
-console.log('🌟', 'Start Build');
+import chalk from 'chalk';
+console.log(chalk.blue('[ts-morph] Start Compiling'));
 // project root
 const rootPath = url.fileURLToPath(new URL('../../', import.meta.url));
 // initial project with config
@@ -10,6 +10,7 @@ const project = new Project({
     compilerOptions: {
         tsConfigFilePath: path.resolve(rootPath, './tsconfig.json'),
         target: ScriptTarget.ES2022,
+        outDir: path.resolve(rootPath, './dist/script'),
     },
 });
 // FIXME: why i need add manually, Project doesn't resolve and add source files in construction
@@ -27,10 +28,9 @@ project
             return;
         const convertedPath = `${matchResult[1]}.js`;
         importPathLiteral.setLiteralValue(convertedPath);
-        // DEBUG:
-        console.log(importPathLiteral.getLiteralValue());
     });
 });
+// emit js files
 project
     .emit()
     .then(result => result.getDiagnostics());
