@@ -1,13 +1,16 @@
 import { REPO_RAW_URL, SourceExtension } from './constants/index.ts';
 
 const fetchChangeLog = async () => {
+    // TODO: 给 node 脚本设置代理
     const response = await fetch(
-        `https//${REPO_RAW_URL}/${SourceExtension.REPO_AUTHOR}/${SourceExtension.REPO_NAME}/${SourceExtension.CHANGELOG_URL}`,
+        `https://${REPO_RAW_URL}/${SourceExtension.REPO_AUTHOR}/${SourceExtension.REPO_NAME}/${SourceExtension.CHANGELOG_URL}`,
     );
+
+    const changelog = await response.text();
 
     // DEBUG:
     // eslint-disable-next-line no-console
-    console.log(response);
+    console.log(changelog);
 };
 
 // TODO:

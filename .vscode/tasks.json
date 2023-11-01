@@ -12,20 +12,18 @@
 			"script": "build:watch",
 			"isBackground": true,
 			"problemMatcher": {
-				"owner": "rspack",
+				"owner": "ts-morph",
+				"fileLocation": "relative",
 				"pattern": {
-					"regexp": "^(\\w+) in (.+):(\\d+):(\\d+)$",
-					"severity": 1,
-					"file": 2,
-					"line": 3,
-					"column": 4
+					"regexp": "^\\[ts-morph\\] Compiling Failed",
+					"file": 1,
+					"location": 2,
+					"severity": 3,
 				},
-				// Rspack config stat in verbose
 				"background": {
-					"beginsPattern": "^PublicPath: \\w+$",
-					// output by ForkTsCheckerWebpackPlugin
-					// due to TsChecker in Rspack dev mode won't block bundle proccess. and usually start after bundling
-					"endsPattern": "No errors found\\.|Found \\d+ error in \\w+ ms\\."
+					"activeOnStart": true,
+					"beginsPattern": "^\\[ts-morph\\] Start Compiling$",
+					"endsPattern": "^\\[ts-morph\\] Compiling Finished$"
 				}
 			},
 			"presentation": {
@@ -41,7 +39,7 @@
 				"owner": "nodemon",
 				"fileLocation": "relative",
 				"pattern": {
-					"regexp": "^\\[nodemon\\] app crashed - waiting for file changes before starting(\\.)(\\.)(\\.)$",
+					"regexp": "^\\[nodemon\\] app crashed - waiting for file changes before starting\\.\\.\\.$",
 					"file": 1,
 					"location": 2,
 					"severity": 3,
