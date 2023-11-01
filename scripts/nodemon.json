@@ -1,6 +1,6 @@
 {
     "verbose": true,
     "watch": [
-        "src/"
+        "../src/"
     ]
 }

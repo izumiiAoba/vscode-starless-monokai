@@ -11,7 +11,7 @@
         "dev": "rm -rf ./dist/script && npm run build && npm run generate",
         "compile:build-scripts": "tsc -p ./scripts/tsconfig.json",
         "build": "node ./scripts/bin/build.js",
-        "build:watch": "nodemon ./scripts/bin/build.js",
+        "build:watch": "nodemon ./scripts/bin/build.js --config ./scripts/nodemon.json",
         "generate": "node ./dist/script/index.js",
         "generate:watch": "nodemon ./dist/script/index.js",
         "lint": "eslint src --ext ts",
