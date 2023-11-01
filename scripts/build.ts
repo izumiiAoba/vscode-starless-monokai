@@ -1,6 +1,6 @@
 import path from 'node:path';
 import url from 'node:url';
-import { Project, ScriptTarget } from 'ts-morph';
+import { ModuleKind, ModuleResolutionKind, Project, ScriptTarget } from 'ts-morph';
 import chalk from 'chalk';
 
 console.log(chalk.blue('[ts-morph] Start Compiling'));
@@ -11,12 +11,22 @@ const rootPath = url.fileURLToPath(new URL('../../', import.meta.url));
 // initial project with config
 const project = new Project({
     compilerOptions: {
-        // TODO: maybe not load config successfully
+        // TODO: not load config successfully
         tsConfigFilePath: path.resolve(rootPath, './tsconfig.json'),
         target: ScriptTarget.ES2022,
         outDir: path.resolve(rootPath, './dist/script'),
+
+        // DEBUG:
+        module: ModuleKind.Node16,
+        moduleResolution: ModuleResolutionKind.Node16,
+        noEmit: true,
+        allowImportingTsExtensions: true,
     },
 });
+
+console.log(
+    project.getCompilerOptions(),
+);
 
 // FIXME: why i need add manually, Project doesn't resolve and add source files in construction
 project.addSourceFilesAtPaths(path.resolve(rootPath, './src/**/*'));
