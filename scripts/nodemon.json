@@ -1,6 +1,7 @@
 {
     "verbose": true,
     "watch": [
-        "../src/"
-    ]
+        "src/"
+    ],
+    "ext": "ts"
 }

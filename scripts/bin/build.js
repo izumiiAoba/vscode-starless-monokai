@@ -15,14 +15,13 @@ import chalk from 'chalk';
             // DEBUG: copy config from root's tsconfig.json
             module: ModuleKind.Node16,
             moduleResolution: ModuleResolutionKind.Node16,
-            noEmit: true,
             allowImportingTsExtensions: true,
             target: ScriptTarget.ES2022,
             strict: true,
             noImplicitReturns: true,
             noFallthroughCasesInSwitch: true,
             noUnusedParameters: true,
-            // lib: ['es2022'],
+            lib: ['lib.es2022.d.ts'], // corresponding file in node_modules/typescript/lib, use `es2022` will cause resolve error
         },
     });
     // DEBUG: Project doesn't resolve and add source files in construction, due to tsConfig load
@@ -54,6 +53,7 @@ import chalk from 'chalk';
     if (emitResult.getEmitSkipped()) {
         console.log(project.formatDiagnosticsWithColorAndContext(emitResult.getDiagnostics()));
         console.error(chalk.red('[ts-morph] Compiling Failed'));
+        return;
     }
     console.log(chalk.green('[ts-morph] Compiling Finished'));
 })();
