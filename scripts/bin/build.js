@@ -12,10 +12,12 @@ import chalk from 'chalk';
             // FIXME: not load config successfully
             tsConfigFilePath: path.resolve(rootPath, './tsconfig.json'),
             outDir: path.resolve(rootPath, './dist/script'),
-            // DEBUG: copy config from root's tsconfig.json
-            module: ModuleKind.Node16,
-            moduleResolution: ModuleResolutionKind.Node16,
-            target: ScriptTarget.ES2022,
+            // FIXME: output file is commonjs, even if module: node16
+            // module: ModuleKind.Node16,
+            // moduleResolution: ModuleResolutionKind.Node16,
+            module: ModuleKind.ES2022,
+            moduleResolution: ModuleResolutionKind.Bundler,
+            target: ScriptTarget.ES2020,
             strict: true,
             noImplicitReturns: true,
             noFallthroughCasesInSwitch: true,
@@ -26,6 +28,8 @@ import chalk from 'chalk';
     // DEBUG: Project doesn't resolve and add source files in construction, due to tsConfig load
     project.addSourceFilesAtPaths(path.resolve(rootPath, './src/**/*'));
     // manipulate import's module file extension
+    // this build script aim to substitute `.ts` file import specifier to `.js`, which isn't allow in module: node16
+    // thus, manipulate before pre-emit compile check
     project
         .getSourceFiles()
         .forEach((sourceFile) => {
