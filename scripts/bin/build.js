@@ -15,7 +15,6 @@ import chalk from 'chalk';
             // DEBUG: copy config from root's tsconfig.json
             module: ModuleKind.Node16,
             moduleResolution: ModuleResolutionKind.Node16,
-            allowImportingTsExtensions: true,
             target: ScriptTarget.ES2022,
             strict: true,
             noImplicitReturns: true,
@@ -26,13 +25,6 @@ import chalk from 'chalk';
     });
     // DEBUG: Project doesn't resolve and add source files in construction, due to tsConfig load
     project.addSourceFilesAtPaths(path.resolve(rootPath, './src/**/*'));
-    // pre-emit diagnostics
-    const diagnostics = project.getPreEmitDiagnostics();
-    if (diagnostics.length !== 0) {
-        console.log(project.formatDiagnosticsWithColorAndContext(diagnostics));
-        console.error(chalk.red('[ts-morph] Compiling Failed (pre-emit)'));
-        return;
-    }
     // manipulate import's module file extension
     project
         .getSourceFiles()
@@ -48,6 +40,13 @@ import chalk from 'chalk';
             importPathLiteral.setLiteralValue(convertedPath);
         });
     });
+    // pre-emit diagnostics
+    const diagnostics = project.getPreEmitDiagnostics();
+    if (diagnostics.length !== 0) {
+        console.log(project.formatDiagnosticsWithColorAndContext(diagnostics));
+        console.error(chalk.red('[ts-morph] Compiling Failed (pre-emit)'));
+        return;
+    }
     // emit js files
     const emitResult = await project.emit();
     if (emitResult.getEmitSkipped()) {
