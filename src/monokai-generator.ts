@@ -7,8 +7,7 @@ import streamp from 'node:stream/promises';
 import fse from 'fs-extra';
 import UnZipper from 'unzipper';
 import type { GeneratorConfig, ThemeConfig } from './types/index.ts';
-import { isLegacyThemeConfig } from './utils/theme.ts';
-import { queryExtensionInfoFromMarketplace } from './utils/api.ts';
+import { isLegacyThemeConfig, queryExtensionInfoFromMarketplace, transformLegacyThemeConfig } from './utils/index.ts';
 
 const tempDirPath = path.resolve(process.cwd(), 'dist/temp');
 
@@ -39,11 +38,9 @@ const createMonokaiGenerator = ({
     };
 
     const formateThemeConfig = (rawConfig: Record<string, unknown>): ThemeConfig => {
-        if (isLegacyThemeConfig(rawConfig)) {
-            // eslint-disable-next-line no-console
-            console.log('isLegacyThemeConfig');
-            return {} as ThemeConfig;
-        }
+        if (isLegacyThemeConfig(rawConfig))
+            return transformLegacyThemeConfig(rawConfig);
+
         return rawConfig as ThemeConfig;
     };
 
@@ -113,7 +110,7 @@ const createMonokaiGenerator = ({
                 throw new Error('extension url not found');
             }
 
-            await getThemeConfig(
+            const themeConfig = await getThemeConfig(
                 latestVersion,
                 async () => {
                     const response = await fetch(latestVersionExtensionUrl);
@@ -128,6 +125,10 @@ const createMonokaiGenerator = ({
                     return response;
                 },
             );
+
+            // DEBUG:
+            // eslint-disable-next-line no-console
+            console.log(themeConfig);
         },
     };
 };
