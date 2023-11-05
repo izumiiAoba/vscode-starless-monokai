@@ -6,51 +6,30 @@ import stream from 'node:stream';
 import streamp from 'node:stream/promises';
 import fse from 'fs-extra';
 import UnZipper from 'unzipper';
-import type { GeneratorConfig, ThemeConfig, Version } from './types/index.ts';
+import type { GeneratorConfig, ThemeConfig } from './types/index.ts';
 import { isLegacyThemeConfig } from './utils/theme.ts';
+import { queryExtensionInfoFromMarketplace } from './utils/api.ts';
 
 const tempDirPath = path.resolve(process.cwd(), 'dist/temp');
 
 const createMonokaiGenerator = ({
     themeName,
-    fetchVersions,
-    fetchPackage,
+    extension,
     findThemeConfigInPackage,
 }: GeneratorConfig) => {
-    const downloadThemePackage = async (version: Version, packageFilePath: string) => {
+    const downloadThemePackage = async (fetchPackage: () => Promise<Response>, packageFilePath: string) => {
         // for local dev
         const isPackageCached = fs.existsSync(packageFilePath);
         if (isPackageCached)
             return;
 
-        const response = await fetchPackage(version);
-
-        if (!response.ok) {
-            const { status, statusText } = response;
-            /**
-             * @example
-             * ```json
-             * {
-             *   "$id": "1",
-             *   "innerException": null,
-             *   "message": "Request was blocked due to exceeding usage of resource 'Count' in namespace 'AnonymousId'. For more information on why your request was blocked, see the topic \"Rate limits\" on the Microsoft Web site (https://go.microsoft.com/fwlink/?LinkId=823950).",
-             *   "typeName": "Microsoft.TeamFoundation.Framework.Server.RequestBlockedException, Microsoft.TeamFoundation.Framework.Server",
-             *   "typeKey": "RequestBlockedException",
-             *   "errorCode": 0,
-             *   "eventId": 3000
-             * }
-             * ```
-             */
-            const body = await response.json();
-            // TODO: better error description
-            throw new Error(JSON.stringify({ status, statusText, body }, undefined, 4));
-        }
+        const response = await fetchPackage();
 
         if (!response.body)
             // TODO: better error description
             throw new Error('response body is empty');
 
-        await fse.emptyDir(tempDirPath);
+        await fse.ensureDir(tempDirPath);
 
         // write to disk as zip extension, instead of vsix
         await streamp.pipeline(
@@ -68,21 +47,17 @@ const createMonokaiGenerator = ({
         return rawConfig as ThemeConfig;
     };
 
-    const getThemeConfig = async (): Promise<ThemeConfig | void> => {
-        const versions = await fetchVersions();
-        const latestVersion = versions[0];
-
+    const getThemeConfig = async (version: string, fetchPackage: () => Promise<Response>): Promise<ThemeConfig | void> => {
         const packageFilePath = path.resolve(
             tempDirPath,
-            [...themeName, latestVersion.join('.'), 'source.zip'].join('-'),
+            [...themeName, version, 'source.zip'].join('-'),
         );
-
         const themeConfigFilePath = path.resolve(
             tempDirPath,
-            [...themeName, latestVersion.join('.'), 'source.json'].join('-'),
+            [...themeName, version, 'source.json'].join('-'),
         );
 
-        await downloadThemePackage(latestVersion, packageFilePath);
+        await downloadThemePackage(fetchPackage, packageFilePath);
 
         // get theme json file from package.zip
         await fs.createReadStream(packageFilePath)
@@ -118,7 +93,41 @@ const createMonokaiGenerator = ({
 
     return {
         run: async () => {
-            getThemeConfig();
+            const extensionInfo = await queryExtensionInfoFromMarketplace(`${extension.publisher}.${extension.name}`);
+            const targetExtension = extensionInfo.results
+                .map(({ extensions }) => extensions)
+                .flat(1)
+                .find(({ extensionName }) => extensionName === extension.name);
+
+            const latestVersionAsset = targetExtension?.versions[0];
+            if (!latestVersionAsset) {
+                // TODO: better error description
+                throw new Error('extension not found');
+            }
+
+            const latestVersion = latestVersionAsset.version;
+            const latestVersionExtensionUrl = latestVersionAsset.files.find(({ assetType }) => assetType === 'Microsoft.VisualStudio.Services.VSIXPackage')?.source;
+
+            if (!latestVersionExtensionUrl) {
+                // TODO: better error description
+                throw new Error('extension url not found');
+            }
+
+            await getThemeConfig(
+                latestVersion,
+                async () => {
+                    const response = await fetch(latestVersionExtensionUrl);
+
+                    if (!response.ok) {
+                        const { status, statusText } = response;
+                        const body = await response.json();
+                        // TODO: better error description
+                        throw new Error(JSON.stringify({ status, statusText, body }, undefined, 4));
+                    }
+
+                    return response;
+                },
+            );
         },
     };
 };

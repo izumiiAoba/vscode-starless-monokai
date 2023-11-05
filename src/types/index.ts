@@ -13,7 +13,5 @@ export type ExtensionInfo = {
 export type GeneratorConfig = {
     themeName: Lowercase<string>[];
     extension: ExtensionInfo;
-    fetchVersions: () => Promise<Version[]>;
-    fetchPackage: (version: Version) => Promise<Response>;
     findThemeConfigInPackage: (filePath: string) => boolean;
 };
