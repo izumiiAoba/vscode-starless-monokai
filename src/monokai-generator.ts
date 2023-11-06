@@ -6,15 +6,25 @@ import stream from 'node:stream';
 import streamp from 'node:stream/promises';
 import fse from 'fs-extra';
 import UnZipper from 'unzipper';
-import type { GeneratorConfig, ThemeConfig } from './types/index.ts';
-import { isLegacyThemeConfig, queryExtensionInfoFromMarketplace, transformLegacyThemeConfig } from './utils/index.ts';
+import { color } from '@uiw/color-convert';
+import type { AnsiColor, Color, GeneratorConfig, ThemeConfig } from './types/index.ts';
+import {
+    capitalize,
+    clonePlainObject,
+    isLegacyThemeConfig,
+    queryExtensionInfoFromMarketplace,
+    transformLegacyThemeConfig,
+} from './utils/index.ts';
+import { TEMP_DIR_PATH, THEME_APPEND_CONFIG } from './constants/index.ts';
 
-const tempDirPath = path.resolve(process.cwd(), 'dist/temp');
+const tempDirPath = path.resolve(process.cwd(), TEMP_DIR_PATH);
 
 const createMonokaiGenerator = ({
     themeName,
     extension,
     findThemeConfigInPackage,
+    presetAnsiColors,
+    preprocessThemeConfig,
 }: GeneratorConfig) => {
     const downloadThemePackage = async (fetchPackage: () => Promise<Response>, packageFilePath: string) => {
         // for local dev
@@ -84,8 +94,75 @@ const createMonokaiGenerator = ({
             return formateThemeConfig(themeRawConfig);
         }
         catch {
-            // TODO: throw Error
+            // TODO:
+            throw new Error(' ');
         }
+    };
+
+    const collectTokenColors = (themeConfig: ThemeConfig): Color[] => {
+        const foregroundColors = themeConfig.tokenColors
+            .map(({ settings }) => settings.foreground)
+            .filter((color): color is Color => !!color);
+
+        return Array.from(new Set(foregroundColors));
+    };
+
+    const generateAnsiColor = (themeConfig: ThemeConfig): AnsiColor => {
+        const colors = collectTokenColors(themeConfig);
+        const ansi: AnsiColor = { } as AnsiColor;
+
+        Object.keys(presetAnsiColors).forEach((colorKey) => {
+            const presetColor = presetAnsiColors[colorKey as keyof AnsiColor];
+            const { rgb: presetRGBColor } = color(presetColor);
+
+            const matchResult: { delta: number; color: Color } = colors.reduce(
+                (result, currentColor) => {
+                    const { rgb: currentRBGColor } = color(currentColor);
+                    const delta = Math.abs((currentRBGColor.r - presetRGBColor.r))
+                        + Math.abs((currentRBGColor.g - presetRGBColor.g))
+                        + Math.abs((currentRBGColor.b - presetRGBColor.b));
+
+                    if (delta < result.delta) {
+                        return {
+                            delta,
+                            color: currentColor,
+                        };
+                    }
+                    else {
+                        return result;
+                    }
+                },
+                { delta: Number.POSITIVE_INFINITY, color: '#ff007f' as Color },
+            );
+            if (!matchResult.color)
+                return;
+
+            ansi[colorKey as keyof AnsiColor] = matchResult.color;
+        });
+
+        return ansi;
+    };
+
+    const setWorkbenchColors = (themeConfig: ThemeConfig, ansiColor: AnsiColor): ThemeConfig => {
+        const workbenchColors: Record<string, Color> = {};
+
+        // editorBracketPairGuide
+        const ansiColorOrder: (keyof AnsiColor)[] = ['blue', 'red', 'green', 'magenta', 'cyan', 'yellow'];
+        Array.from({ length: 6 }).fill(null).forEach((_, index) => {
+            workbenchColors[`editorBracketPairGuide.background${index + 1}`] = ansiColor[ansiColorOrder[index]];
+            workbenchColors[`editorBracketPairGuide.activeBackground${index + 1}`] = ansiColor[ansiColorOrder[index]];
+        });
+
+        // terminal ansi color
+        Object.keys(ansiColor).forEach((colorKey) => {
+            workbenchColors[`terminal.ansi${capitalize(colorKey)}`] = ansiColor[colorKey as keyof AnsiColor];
+            workbenchColors[`terminal.ansiBright${capitalize(colorKey)}`] = ansiColor[colorKey as keyof AnsiColor];
+        });
+
+        return {
+            ...themeConfig,
+            colors: workbenchColors,
+        };
     };
 
     return {
@@ -110,7 +187,7 @@ const createMonokaiGenerator = ({
                 throw new Error('extension url not found');
             }
 
-            const themeConfig = await getThemeConfig(
+            const sourceThemeConfig = await getThemeConfig(
                 latestVersion,
                 async () => {
                     const response = await fetch(latestVersionExtensionUrl);
@@ -126,9 +203,30 @@ const createMonokaiGenerator = ({
                 },
             );
 
-            // DEBUG:
-            // eslint-disable-next-line no-console
-            console.log(themeConfig);
+            if (!sourceThemeConfig)
+                return;
+
+            let themeConfig = preprocessThemeConfig
+                ? preprocessThemeConfig(clonePlainObject(sourceThemeConfig))
+                : sourceThemeConfig;
+
+            const ansiColor = generateAnsiColor(themeConfig);
+
+            themeConfig = setWorkbenchColors(themeConfig, ansiColor);
+
+            const { type, colorSpaceName, colors, tokenColors } = themeConfig;
+
+            return {
+                fileName: `${themeName.join('-')}.json`,
+                themeConfig: {
+                    name: themeName.map(s => capitalize(s)).join(' '),
+                    ...THEME_APPEND_CONFIG,
+                    type,
+                    colorSpaceName,
+                    colors,
+                    tokenColors,
+                },
+            };
         },
     };
 };

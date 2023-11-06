@@ -1,3 +1,5 @@
+import type { AnsiColor, ThemeConfig } from './theme.ts';
+
 export * from './vscode.ts';
 export * from './theme.ts';
 
@@ -14,4 +16,7 @@ export type GeneratorConfig = {
     themeName: Lowercase<string>[];
     extension: ExtensionInfo;
     findThemeConfigInPackage: (filePath: string) => boolean;
+    preprocessThemeConfig?: (config: ThemeConfig) => ThemeConfig;
+    /** match tokenColors with preset as much as possible */
+    presetAnsiColors: AnsiColor;
 };
