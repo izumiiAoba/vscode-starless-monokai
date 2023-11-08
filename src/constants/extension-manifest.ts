@@ -9,8 +9,10 @@ export const manifest = {
     name: 'starless-monokai',
     displayName: 'Starless Monokai',
     version: '0.1.0',
-    publisher: 'izumiiAoba',
+    publisher: 'izumii',
     engines: {
         vscode: '^1.57.0',
     },
 };
+
+export const MANIFEST_SOURCES_KEY = 'sources';

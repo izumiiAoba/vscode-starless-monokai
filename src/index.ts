@@ -2,6 +2,7 @@ import path from 'node:path';
 import process from 'node:process';
 import fse from 'fs-extra';
 import {
+    MANIFEST_SOURCES_KEY,
     MONOKAI_PRO_YELLOW,
     MonokaiPro,
     ONE_DARK_BLUE,
@@ -45,15 +46,14 @@ setFetchProxy('http://127.0.0.1:7890');
                 extension: OneMonokai,
                 findThemeConfigInPackage: filePath => filePath === 'extension/themes/OneMonokai-color-theme.json',
                 presetAnsiColors: {
-                // from one-monokai's terminal.ansi colors
                     black: '#2d3139',
-                    blue: '#528bff',
+                    blue: '#61afef',
                     green: '#98c379',
                     yellow: '#e5c07b',
                     cyan: '#56b6c2',
                     magenta: '#c678dd',
                     red: '#e06c75',
-                    white: '#d7dae0',
+                    white: '#abb2bf',
                 },
             }),
         ].map(generator => generator.run()));
@@ -74,6 +74,15 @@ setFetchProxy('http://127.0.0.1:7890');
                 // TODO: better vscode extension manifest type
                 themes: [] as Record<string, unknown>[],
             },
+            [MANIFEST_SOURCES_KEY]: themes.map(({ sourceExtension }) => {
+                const { publisher, versions, extensionName } = sourceExtension;
+                const { publisherName } = publisher;
+                const latestVersion = versions[0].version;
+                return [
+                    `${publisherName}.${extensionName}`,
+                    latestVersion,
+                ];
+            }),
         };
         themes.forEach((theme) => {
             packageJson.contributes.themes.push({

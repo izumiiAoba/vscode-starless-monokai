@@ -6,7 +6,7 @@ import stream from 'node:stream';
 import streamp from 'node:stream/promises';
 import fse from 'fs-extra';
 import UnZipper from 'unzipper';
-import { color } from '@uiw/color-convert';
+import ColorConvert from 'color';
 import type { AnsiColor, Color, GeneratorConfig, ThemeConfig } from './types/index.ts';
 import {
     capitalize,
@@ -16,6 +16,7 @@ import {
     transformLegacyThemeConfig,
 } from './utils/index.ts';
 import { TEMP_DIR_PATH, THEME_APPEND_CONFIG } from './constants/index.ts';
+import { generateWorkBenchColors } from './generate-workbench-colors.ts';
 
 const tempDirPath = path.resolve(process.cwd(), TEMP_DIR_PATH);
 
@@ -113,14 +114,14 @@ const createMonokaiGenerator = ({
 
         Object.keys(presetAnsiColors).forEach((colorKey) => {
             const presetColor = presetAnsiColors[colorKey as keyof AnsiColor];
-            const { rgb: presetRGBColor } = color(presetColor);
+            const [presetColorRed, presetColorGreen, presetColorBlue] = ColorConvert(presetColor).rgb().array();
 
             const matchResult: { delta: number; color: Color } = colors.reduce(
                 (result, currentColor) => {
-                    const { rgb: currentRBGColor } = color(currentColor);
-                    const delta = Math.abs((currentRBGColor.r - presetRGBColor.r))
-                        + Math.abs((currentRBGColor.g - presetRGBColor.g))
-                        + Math.abs((currentRBGColor.b - presetRGBColor.b));
+                    const [r, g, b] = ColorConvert(currentColor).rgb().array();
+                    const delta = Math.abs((presetColorRed - r))
+                        + Math.abs((presetColorGreen - g))
+                        + Math.abs((presetColorBlue - b));
 
                     if (delta < result.delta) {
                         return {
@@ -144,20 +145,7 @@ const createMonokaiGenerator = ({
     };
 
     const setWorkbenchColors = (themeConfig: ThemeConfig, ansiColor: AnsiColor): ThemeConfig => {
-        const workbenchColors: Record<string, Color> = {};
-
-        // editorBracketPairGuide
-        const ansiColorOrder: (keyof AnsiColor)[] = ['blue', 'red', 'green', 'magenta', 'cyan', 'yellow'];
-        Array.from({ length: 6 }).fill(null).forEach((_, index) => {
-            workbenchColors[`editorBracketPairGuide.background${index + 1}`] = ansiColor[ansiColorOrder[index]];
-            workbenchColors[`editorBracketPairGuide.activeBackground${index + 1}`] = ansiColor[ansiColorOrder[index]];
-        });
-
-        // terminal ansi color
-        Object.keys(ansiColor).forEach((colorKey) => {
-            workbenchColors[`terminal.ansi${capitalize(colorKey)}`] = ansiColor[colorKey as keyof AnsiColor];
-            workbenchColors[`terminal.ansiBright${capitalize(colorKey)}`] = ansiColor[colorKey as keyof AnsiColor];
-        });
+        const workbenchColors = generateWorkBenchColors(ansiColor);
 
         return {
             ...themeConfig,
@@ -218,6 +206,7 @@ const createMonokaiGenerator = ({
 
             return {
                 fileName: `${themeName.join('-')}.json`,
+                sourceExtension: targetExtension,
                 themeConfig: {
                     name: themeName.map(s => capitalize(s)).join(' '),
                     ...THEME_APPEND_CONFIG,
