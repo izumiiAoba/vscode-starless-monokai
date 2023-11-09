@@ -4,7 +4,7 @@
 // some fields is required
 // https://code.visualstudio.com/api/references/extension-manifest
 
-const VERSION = '0.1.0' satisfies `${number}.${number}.${number}`;
+const VERSION = '0.2.0' satisfies `${number}.${number}.${number}`;
 
 // output as extension's package.json
 export const MANIFEST = {
@@ -22,6 +22,13 @@ export const MANIFEST = {
     },
     categories: ['Themes'],
     icon: 'assets/icon.png',
+    // TODO: better vscode extension manifest type
+    contributes: {
+        'markdown.previewStyles': [
+            './assets/markdown-preview.css',
+        ],
+        'themes': [] as unknown[],
+    },
 };
 
 export const MANIFEST_SOURCES_KEY = 'sources';
@@ -31,6 +38,7 @@ export const COMMON_FILES: ([file: string] | [sourceFile: string, rename: string
     ['EXTENSION_README.md', 'README.md'],
     ['LICENSE'],
     ['CHANGELOG.md'],
+    ['assets/markdown-preview.css'],
     ['assets/icon.png'],
     ['assets/screenshot-1.png'],
 ];

@@ -12,10 +12,6 @@ const outputExtension = async (themes: MonokaiGenerateResult[]) => {
     // output package.json
     const packageJson = {
         ...MANIFEST,
-        contributes: {
-            // TODO: better vscode extension manifest type
-            themes: [] as Record<string, unknown>[],
-        },
         [MANIFEST_SOURCES_KEY]: themes.map(({ sourceExtension }) => {
             const { publisher, versions, extensionName } = sourceExtension;
             const { publisherName } = publisher;
@@ -26,13 +22,13 @@ const outputExtension = async (themes: MonokaiGenerateResult[]) => {
             ];
         }),
     };
-    themes.forEach((theme) => {
-        packageJson.contributes.themes.push({
+    packageJson.contributes.themes = themes.map(
+        theme => ({
             label: theme.themeConfig.name,
             uiTheme: 'vs-dark',
             path: `./themes/${theme.fileName}`,
-        });
-    });
+        }),
+    );
     await fse.writeJSON(
         path.resolve(process.cwd(), OUTPUT_EXTENSION_DIR_PATH, 'package.json'),
         packageJson,
