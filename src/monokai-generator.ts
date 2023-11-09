@@ -220,4 +220,6 @@ const createMonokaiGenerator = ({
     };
 };
 
+export type MonokaiGenerateResult = NonNullable<Awaited<ReturnType<ReturnType<typeof createMonokaiGenerator>['run']>>>;
+
 export default createMonokaiGenerator;

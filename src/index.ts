@@ -1,17 +1,8 @@
-import path from 'node:path';
-import process from 'node:process';
-import fse from 'fs-extra';
-import {
-    MANIFEST_SOURCES_KEY,
-    MONOKAI_PRO_YELLOW,
-    MonokaiPro,
-    ONE_DARK_BLUE,
-    OUTPUT_EXTENSION_DIR_PATH,
-    OneMonokai,
-    manifest,
-} from './constants/index.ts';
+import { MONOKAI_PRO_YELLOW, MonokaiPro, ONE_DARK_BLUE, OneMonokai } from './constants/index.ts';
+import type { MonokaiGenerateResult } from './monokai-generator.ts';
 import createMonokaiGenerator from './monokai-generator.ts';
 import { setFetchProxy } from './utils/index.ts';
+import outputExtension from './output-extension.ts';
 
 // NOTE: if necessary
 setFetchProxy('http://127.0.0.1:7890');
@@ -59,60 +50,10 @@ setFetchProxy('http://127.0.0.1:7890');
         ].map(generator => generator.run()));
 
         const themes = themeGenerateResults.filter(
-            (theme): theme is NonNullable<Awaited<ReturnType<ReturnType<typeof createMonokaiGenerator>['run']>>> => !!theme,
+            (theme): theme is MonokaiGenerateResult => !!theme,
         );
 
-        // output
-        await fse.emptyDir(
-            path.resolve(process.cwd(), OUTPUT_EXTENSION_DIR_PATH),
-        );
-
-        // output package.json
-        const packageJson = {
-            ...manifest,
-            contributes: {
-                // TODO: better vscode extension manifest type
-                themes: [] as Record<string, unknown>[],
-            },
-            [MANIFEST_SOURCES_KEY]: themes.map(({ sourceExtension }) => {
-                const { publisher, versions, extensionName } = sourceExtension;
-                const { publisherName } = publisher;
-                const latestVersion = versions[0].version;
-                return [
-                    `${publisherName}.${extensionName}`,
-                    latestVersion,
-                ];
-            }),
-        };
-        themes.forEach((theme) => {
-            packageJson.contributes.themes.push({
-                label: theme.themeConfig.name,
-                uiTheme: 'vs-dark',
-                path: `./themes/${theme.fileName}`,
-            });
-        });
-        await fse.writeJSON(
-            path.resolve(process.cwd(), OUTPUT_EXTENSION_DIR_PATH, 'package.json'),
-            packageJson,
-            { spaces: 4 },
-        );
-
-        // output themes
-        await fse.emptyDir(
-            path.resolve(process.cwd(), OUTPUT_EXTENSION_DIR_PATH, 'themes'),
-        );
-        await Promise.all(
-            themes.map(({ fileName, themeConfig }) => fse.writeJSON(
-                path.resolve(
-                    process.cwd(),
-                    OUTPUT_EXTENSION_DIR_PATH,
-                    'themes',
-                    fileName,
-                ),
-                themeConfig,
-                { spaces: 4 },
-            )),
-        );
+        await outputExtension(themes);
     }
     catch (error) {
         // DEBUG:
