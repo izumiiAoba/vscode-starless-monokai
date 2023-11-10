@@ -22,3 +22,14 @@ refer to [*Debugging the extension*](https://code.visualstudio.com/api/get-start
     - [Launch.json attributes](https://code.visualstudio.com/docs/editor/debugging#_launchjson-attributes)
 - [UX Guidelines](https://code.visualstudio.com/api/ux-guidelines/overview)
 - [Theme Color](https://code.visualstudio.com/api/references/theme-color)
+
+### explore syntax highlighting
+use built-in [scope inspector tool](https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide#scope-inspector)
+1. open Command Palette
+2. `Developer: Inspect Editor Tokens and Scopes`
+
+### inspect vscode element style
+use built-in devtool
+1. debug, to launch extension dev host
+2. open Command Palette
+3. `Developer: Open Webview Developer Devtools`

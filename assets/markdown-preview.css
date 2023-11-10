@@ -22,6 +22,12 @@ code {
     border-radius: 5px;
 }
 
+blockquote {
+    border-color: #61afef;
+    background-color: #00468033;
+    padding: 0 16px;
+}
+
 .markdown-body pre code {
     color: var(--color-fg-default);
     background-color: unset;
