@@ -33,3 +33,7 @@ use built-in devtool
 1. debug, to launch extension dev host
 2. open Command Palette
 3. `Developer: Open Webview Developer Devtools`
+
+### lint and git hooks
+- [`postinstall`](https://docs.npmjs.com/cli/v10/using-npm/scripts#life-cycle-operation-order) in `scripts` will auto register git hooks set by [simple-git-hooks](https://github.com/toplenboren/simple-git-hooks), after `npm install`
+- `npm run register-hooks` manually each time changed git hooks in `simple-git-hooks` field of `package.json`
