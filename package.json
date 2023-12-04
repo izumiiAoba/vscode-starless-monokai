@@ -26,7 +26,7 @@
         "unzipper": "^0.10.14"
     },
     "devDependencies": {
-        "@antfu/eslint-config": "^1.0.0-beta.28",
+        "@antfu/eslint-config": "^2.2.2",
         "@types/color": "^3.0.6",
         "@types/fs-extra": "^11.0.3",
         "@types/node": "^20.8.7",
