@@ -1,6 +1,6 @@
 import { ANSI_COLOR_CONTRAST_ORDER } from './constants/index.ts';
 import type { AnsiColor, Color } from './types/index.ts';
-import { brighter, capitalize } from './utils/index.ts';
+import { brighter, capitalize, fade } from './utils/index.ts';
 
 export const generateWorkBenchColors = (
     ansiColor: Readonly<AnsiColor>,
@@ -18,8 +18,7 @@ export const generateWorkBenchColors = (
             Array.from({ length: 6 }).fill(null).forEach((_, index) => {
                 set(
                     `editorBracketPairGuide.background${index + 1}`,
-                    // TODO: constants alpha 7f
-                    `${ansiColor[ANSI_COLOR_CONTRAST_ORDER[index]]}7f`,
+                    fade(ansiColor[ANSI_COLOR_CONTRAST_ORDER[index]]),
                 );
                 set(
                     `editorBracketPairGuide.activeBackground${index + 1}`,
@@ -43,6 +42,7 @@ export const generateWorkBenchColors = (
         (set) => {
             const cursorColor = workbenchColors['editorCursor.foreground'];
             set('editorLineNumber.activeForeground', cursorColor);
+            set('editor.lineHighlightBackground', fade(cursorColor, '1f'));
         },
         // bracket pair colorization
         (set) => {

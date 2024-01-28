@@ -14,7 +14,7 @@ export type ExtensionInfo = {
 
 export type GeneratorConfig = {
     themeName: Lowercase<string>[];
-    extension: ExtensionInfo;
+    sourceExtension: ExtensionInfo;
     findThemeConfigInPackage: (filePath: string) => boolean;
     preprocessThemeConfig?: (config: ThemeConfig) => ThemeConfig;
     /** match tokenColors with preset as much as possible */

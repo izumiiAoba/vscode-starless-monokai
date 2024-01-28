@@ -22,7 +22,7 @@ const tempDirPath = path.resolve(process.cwd(), TEMP_DIR_PATH);
 
 const createMonokaiGenerator = ({
     themeName,
-    extension,
+    sourceExtension,
     findThemeConfigInPackage,
     presetAnsiColors,
     preprocessThemeConfig,
@@ -155,11 +155,13 @@ const createMonokaiGenerator = ({
 
     return {
         run: async () => {
-            const extensionInfo = await queryExtensionInfoFromMarketplace(`${extension.publisher}.${extension.name}`);
+            const extensionInfo = await queryExtensionInfoFromMarketplace(
+                `${sourceExtension.publisher}.${sourceExtension.name}`,
+            );
             const targetExtension = extensionInfo.results
                 .map(({ extensions }) => extensions)
                 .flat(1)
-                .find(({ extensionName }) => extensionName === extension.name);
+                .find(({ extensionName }) => extensionName === sourceExtension.name);
 
             const latestVersionAsset = targetExtension?.versions[0];
             if (!latestVersionAsset) {

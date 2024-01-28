@@ -4,7 +4,7 @@
 // some fields is required
 // https://code.visualstudio.com/api/references/extension-manifest
 
-const VERSION = '0.3.0' satisfies `${number}.${number}.${number}`;
+const VERSION = '0.4.0' satisfies `${number}.${number}.${number}`;
 
 // output as extension's package.json
 export const MANIFEST = {

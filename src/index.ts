@@ -12,7 +12,7 @@ setFetchProxy('http://127.0.0.1:7890');
         const themeGenerateResults = await Promise.all([
             createMonokaiGenerator({
                 themeName: ['starless', 'monokai', 'pro'],
-                extension: MonokaiPro,
+                sourceExtension: MonokaiPro,
                 findThemeConfigInPackage: filePath => filePath === 'extension/themes/Monokai Pro.json',
                 presetAnsiColors: {
                     black: '#403e41',
@@ -33,8 +33,49 @@ setFetchProxy('http://127.0.0.1:7890');
                 },
             }),
             createMonokaiGenerator({
+                themeName: ['starless', 'monokai', 'atom'],
+                // same as monokai-pro
+                sourceExtension: MonokaiPro,
+                findThemeConfigInPackage: filePath => filePath === 'extension/themes/Monokai Pro.json',
+                presetAnsiColors: {
+                    black: '#403e41',
+                    blue: ONE_DARK_BLUE,
+                    cyan: '#78dce8',
+                    green: '#a9dc76',
+                    magenta: '#ab9df2',
+                    red: '#ff6188',
+                    white: '#d7dae0',
+                    yellow: '#fc9867',
+                },
+                // different from monokai-pro, swap the colors of Function and String
+                preprocessThemeConfig: (config) => {
+                    const monokaiProGreen = config.tokenColors.find((token) => {
+                        if (Array.isArray(token.scope))
+                            return token.scope.includes('entity.name.function');
+                        else
+                            return token.scope === 'entity.name.function';
+                    })?.settings.foreground;
+
+                    if (!monokaiProGreen) {
+                        // TODO: error log
+                        return config;
+                    }
+
+                    config.tokenColors.forEach((token) => {
+                        // set String to green
+                        if (token.settings.foreground === MONOKAI_PRO_YELLOW)
+                            token.settings.foreground = monokaiProGreen;
+                        // set Function to blue
+                        else if (token.settings.foreground === monokaiProGreen)
+                            token.settings.foreground = ONE_DARK_BLUE;
+                    });
+
+                    return config;
+                },
+            }),
+            createMonokaiGenerator({
                 themeName: ['starless', 'monokai', 'one'],
-                extension: OneMonokai,
+                sourceExtension: OneMonokai,
                 findThemeConfigInPackage: filePath => filePath === 'extension/themes/OneMonokai-color-theme.json',
                 presetAnsiColors: {
                     black: '#2d3139',
