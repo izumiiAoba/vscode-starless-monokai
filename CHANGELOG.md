@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.4.1
+### fix
+- 🖨️ remove duplicate source infos in extension's manifest
+
 ## 0.4.0
 ### feature
 - ⚛️ add new variant theme based on Atom One Dark

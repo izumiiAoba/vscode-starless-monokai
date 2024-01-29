@@ -3,6 +3,7 @@ import process from 'node:process';
 import fse from 'fs-extra';
 import { COMMON_FILES, MANIFEST, MANIFEST_SOURCES_KEY, OUTPUT_EXTENSION_DIR_PATH } from './constants/index.ts';
 import type { MonokaiGenerateResult } from './monokai-generator.ts';
+import type { Version } from './types/index.ts';
 
 const outputExtension = async (themes: MonokaiGenerateResult[]) => {
     // output
@@ -12,15 +13,20 @@ const outputExtension = async (themes: MonokaiGenerateResult[]) => {
     // output package.json
     const packageJson = {
         ...MANIFEST,
-        [MANIFEST_SOURCES_KEY]: themes.map(({ sourceExtension }) => {
-            const { publisher, versions, extensionName } = sourceExtension;
-            const { publisherName } = publisher;
-            const latestVersion = versions[0].version;
-            return [
-                `${publisherName}.${extensionName}`,
-                latestVersion,
-            ];
-        }),
+        [MANIFEST_SOURCES_KEY]: themes.reduce(
+            (sources, { sourceExtension }) => {
+                const { publisher, versions, extensionName } = sourceExtension;
+                const { publisherName } = publisher;
+                const latestVersion = versions[0].version;
+
+                const sourceExtensionKey = `${publisherName}.${extensionName}`;
+                if (!sources.find(([key]) => sourceExtensionKey === key))
+                    sources.push([sourceExtensionKey, latestVersion]);
+
+                return sources;
+            },
+            [] as [string, string][],
+        ),
     };
     packageJson.contributes.themes = themes.map(
         theme => ({

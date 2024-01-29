@@ -58,7 +58,7 @@ const createMonokaiGenerator = ({
     const getThemeConfig = async (version: string, fetchPackage: () => Promise<Response>): Promise<ThemeConfig | void> => {
         const packageFilePath = path.resolve(
             tempDirPath,
-            [...themeName, version, 'source.zip'].join('-'),
+            [sourceExtension.name, version, 'source.zip'].join('-'),
         );
         const themeConfigFilePath = path.resolve(
             tempDirPath,
