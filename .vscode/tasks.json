@@ -12,18 +12,18 @@
 			"script": "build:watch",
 			"isBackground": true,
 			"problemMatcher": {
-				"owner": "ts-morph",
+				"owner": "swc",
 				"fileLocation": "relative",
 				"pattern": {
-					"regexp": "^\\[ts-morph\\] Compiling Failed",
+					"regexp": "^\\[SWC\\] Building Failed",
 					"file": 1,
 					"location": 2,
 					"severity": 3,
 				},
 				"background": {
 					"activeOnStart": true,
-					"beginsPattern": "^\\[ts-morph\\] Start Compiling$",
-					"endsPattern": "^\\[ts-morph\\] Compiling Finished$"
+					"beginsPattern": "^\\[SWC\\] Building Start$",
+					"endsPattern": "^\\[SWC\\] Building Finished$"
 				}
 			},
 			"presentation": {

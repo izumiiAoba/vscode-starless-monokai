@@ -7,12 +7,11 @@
         "build": "./scripts/bin/build.js"
     },
     "scripts": {
-        "dev": "rm -rf ./dist/script && npm run build && npm run generate",
-        "compile:build-scripts": "tsc -p ./scripts/tsconfig.json",
-        "build": "node ./scripts/bin/build.js",
-        "build:watch": "nodemon ./scripts/bin/build.js --config ./scripts/nodemon.json",
+        "dev": "npm run build && npm run generate",
+        "build": "echo \"[SWC] Building Start\" && rm -rf ./dist/script && swc ./src -d ./dist/script && mv ./dist/script/src/* ./dist/script && rm -rf .dist/script/src && echo \"[SWC] Building Finished\"",
+        "build:watch": "nodemon --exec npm run build --config nodemon.build.json",
         "generate": "node ./dist/script/index.js",
-        "generate:watch": "nodemon ./dist/script/index.js",
+        "generate:watch": "nodemon ./dist/script/index.js --config nodemon.generate.json",
         "lint": "eslint src",
         "lint:type": "tsc",
         "publish": "cd dist/extension && vsce publish",
@@ -27,6 +26,8 @@
     },
     "devDependencies": {
         "@antfu/eslint-config": "^2.6.3",
+        "@swc/cli": "^0.3.12",
+        "@swc/core": "^1.4.13",
         "@types/color": "^3.0.6",
         "@types/fs-extra": "^11.0.3",
         "@types/node": "^20.8.7",
@@ -36,6 +37,7 @@
         "eslint": "^8.52.0",
         "nodemon": "^3.0.1",
         "simple-git-hooks": "^2.9.0",
+        "swc-plugin-transform-module-specifiers": "^0.1.0",
         "ts-morph": "^20.0.0",
         "type-fest": "^4.6.0",
         "typescript": "^5.2.2",
